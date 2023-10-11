@@ -32,11 +32,12 @@ with open('AFINN-en-165.txt', 'r') as f:
 # print(prez_name)
 
 map_array = []
-count = 0
 for line in sys.stdin:
 # for line in fileinput.input():
 #     print(fileinput.filename())
 #     print(os.path.basename(sys.stdin))
+#     president_name = os.environ["mapreduce_input_file"]
+#     president_name = president_name.split()
     line = clean_text(line)
     line = line.strip()
     words = line.split()
@@ -44,11 +45,9 @@ for line in sys.stdin:
         #if word is in the valence list
         if word in d_valences:
             prez = 'adams'
-            # temp = os.environ('sys.stdin')
-            # print(temp)
-            valence = d_valences[word]
-            pair = (prez, valence)
-            print(pair)
+            valence = str(d_valences[word])
+            # pair = (prez, valence)
+            print(prez + '\t' + valence)
         #then create tuple ('president', word_valence)
         #all the mapper needs to do is create this tuple and output?
         #Then the reducer SAVES all the outputs, sorts/does it calculations
