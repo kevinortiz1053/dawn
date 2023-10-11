@@ -12,11 +12,12 @@ def clean_text(text):
 
 # Given an array with all (president, word-valence) pairs
 
-d_grouping = {}
+# d_grouping = {}
 for line in sys.stdin:
-    line = line.strip()
-    president, valence = line.split(',', 1)
-    president = clean_text(president)
-    valence = int(clean_text(valence))
-    pair = (president, valence)
-    print(pair)
+    # line = line.strip()
+    # president, valence = line.split(',', 1)
+    # president = clean_text(president)
+    # valence = int(clean_text(valence))
+    # pair = (president, valence)
+    # print(pair)
+    print(line)
