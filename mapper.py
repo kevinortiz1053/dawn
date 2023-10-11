@@ -1,6 +1,4 @@
 """mapper.py"""
-import io
-import os
 import sys
 import re
 import string
@@ -15,15 +13,20 @@ def clean_text(text):
     return text
 
 
-d_valences = {}
-with open('AFINN-en-165.txt', 'r') as f:
-# with open('valence_scores.txt', 'r') as f:
-    valence_scores = f.readlines()
-    for line in valence_scores:
-        line = line.split()
-        if len(line) < 3:
-            (key, val) = line
-            d_valences[key] = val
+# d_valences = {}
+# with open('AFINN-en-165.txt', 'r') as f:
+#     valence_scores = f.readlines()
+#     for line in valence_scores:
+#         line = line.split()
+#         if len(line) < 3:
+#             (key, val) = line
+#             d_valences[key] = val
+d_valences = {
+    'the': 1,
+    'a': 0,
+    'and': 2,
+    'there': 0
+}
 
 
 # speech = sys.stdin
@@ -31,13 +34,7 @@ with open('AFINN-en-165.txt', 'r') as f:
 # prez_name = text_wrapper.name
 # print(prez_name)
 
-map_array = []
 for line in sys.stdin:
-# for line in fileinput.input():
-#     print(fileinput.filename())
-#     print(os.path.basename(sys.stdin))
-#     president_name = os.environ["mapreduce_input_file"]
-#     president_name = president_name.split()
     line = clean_text(line)
     line = line.strip()
     words = line.split()
@@ -49,8 +46,12 @@ for line in sys.stdin:
             # pair = (prez, valence)
             print(prez + '\t' + valence)
         #then create tuple ('president', word_valence)
-        #all the mapper needs to do is create this tuple and output?
-        #Then the reducer SAVES all the outputs, sorts/does it calculations
 
 
-# print(map_array)
+
+
+# for line in fileinput.input():
+#     print(fileinput.filename())
+#     print(os.path.basename(sys.stdin))
+#     president_name = os.environ["mapreduce_input_file"]
+#     president_name = president_name.split()
