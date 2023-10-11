@@ -16,7 +16,8 @@ def clean_text(text):
 
 
 d_valences = {}
-with open('valence_scores.txt', 'r') as f:
+with open('AFINN-en-165.txt', 'r') as f:
+# with open('valence_scores.txt', 'r') as f:
     valence_scores = f.readlines()
     for line in valence_scores:
         line = line.split()
