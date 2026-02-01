@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💝 Valentine's Question</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 60px 80px;
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 {
+            font-size: 3.5em;
+            color: #e91e63;
+            margin-bottom: 40px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .heart {
+            font-size: 4em;
+            animation: heartbeat 1.5s ease-in-out infinite;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .buttons {
+            margin-top: 40px;
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 20px 50px;
+            font-size: 1.5em;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #yesBtn {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        #noBtn {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            transition: none;
+        }
+        
+        #noBtn.moving {
+            position: fixed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-content img {
+            max-width: 90vw;
+            max-height: 80vh;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(255, 255, 255, 0.3);
+        }
+
+        .modal-text {
+            color: white;
+            font-size: 3em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            background: #f0f;
+            position: absolute;
+            animation: confetti-fall 3s linear forwards;
+        }
+
+        @keyframes confetti-fall {
+            to {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <span class="heart">💖</span>
+        <h1>Will you be my valentine?</h1>
+
+        <div class="buttons">
+            <button id="yesBtn">Yes! 💕</button>
+            <button id="noBtn">No</button>
+        </div>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-text">Yay! 🎉💖</div>
+            <img id="celebrationGif" src="celebration.png" alt="Celebration">
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const modal = document.getElementById('modal');
+        
+        let isMoving = false;
+
+        // Get safe area bounds (avoiding text)
+        function getSafeBounds() {
+            const btnWidth = 150;
+            const btnHeight = 70;
+            
+            return {
+                minX: 0,
+                maxX: window.innerWidth - btnWidth,
+                minY: 0,
+                maxY: window.innerHeight - btnHeight
+            };
+        }
+
+        // Move button away from cursor
+        function moveButton() {
+            if (!isMoving) {
+                noBtn.classList.add('moving');
+                isMoving = true;
+            }
+            
+            const bounds = getSafeBounds();
+            const container = document.querySelector('.container');
+            const containerRect = container.getBoundingClientRect();
+            const yesBtnRect = yesBtn.getBoundingClientRect();
+            
+            let newX, newY;
+            let attempts = 0;
+            const maxAttempts = 50;
+            
+            // Keep trying until we find a position that doesn't overlap
+            do {
+                newX = Math.random() * (bounds.maxX - bounds.minX) + bounds.minX;
+                newY = Math.random() * (bounds.maxY - bounds.minY) + bounds.minY;
+                attempts++;
+                
+                // Check if new position overlaps with container (with some padding)
+                const btnRight = newX + 150;
+                const btnBottom = newY + 70;
+                const padding = 20;
+                
+                const overlapsContainer = !(
+                    newX > containerRect.right + padding ||
+                    btnRight < containerRect.left - padding ||
+                    newY > containerRect.bottom + padding ||
+                    btnBottom < containerRect.top - padding
+                );
+                
+                // Check if new position overlaps with Yes button
+                const overlapsYesBtn = !(
+                    newX > yesBtnRect.right + padding ||
+                    btnRight < yesBtnRect.left - padding ||
+                    newY > yesBtnRect.bottom + padding ||
+                    btnBottom < yesBtnRect.top - padding
+                );
+                
+                if ((!overlapsContainer && !overlapsYesBtn) || attempts >= maxAttempts) {
+                    break;
+                }
+            } while (attempts < maxAttempts);
+            
+            noBtn.style.left = newX + 'px';
+            noBtn.style.top = newY + 'px';
+        }
+
+        // Check proximity to button
+        function checkProximity(e) {
+            const btnRect = noBtn.getBoundingClientRect();
+            const proximity = 100;
+            
+            const distance = Math.sqrt(
+                Math.pow(e.clientX - (btnRect.left + btnRect.width / 2), 2) +
+                Math.pow(e.clientY - (btnRect.top + btnRect.height / 2), 2)
+            );
+            
+            if (distance < proximity) {
+                moveButton();
+            }
+        }
+
+        // Create confetti
+        function createConfetti() {
+            const colors = ['#ff0000', '#ff69b4', '#ff1493', '#ff69b4', '#ffc0cb'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.top = '-10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 3000);
+                }, i * 30);
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('mousemove', checkProximity);
+        
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveButton();
+        });
+
+        yesBtn.addEventListener('click', () => {
+            modal.style.display = 'flex';
+            createConfetti();
+        });
+
+        modal.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Initialize No button position
+        window.addEventListener('load', () => {
+            // Start with No button in its normal position (side by side with Yes)
+            // It will become fixed position only after first move
+        });
+    </script>
+</body>
+</html>
